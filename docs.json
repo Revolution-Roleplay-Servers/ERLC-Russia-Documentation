@@ -3,9 +3,9 @@
   "theme": "palm",
   "name": "Moscow RolePlay",
   "colors": {
-    "primary": "#3b82f6",
-    "light": "#60a5fa",
-    "dark": "#1d4ed8"
+    "primary": "#5865f2",
+    "light": "#798df9",
+    "dark": "#5865f2"
   },
   "favicon": "/favicon.png",
   "navigation": {
