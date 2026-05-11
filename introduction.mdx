@@ -1,7 +1,68 @@
 ---
-title: "introduction"
+title: "Введение"
+icon: "/images/book-icon.svg"
 ---
 
-ргнре
+<img
+  src="/images/hero-banner.png"
+  alt="ER:LC Россия API"
+  style={{width: "100%", height: "215px", borderRadius: "12px", objectFit: "cover"}}
+  noZoom
+/>
 
-/
+<div className="flex justify-center items-center w-full">
+  <h1 className="text-3xl font-bold">ER:LC Россия API Документация</h1>
+</div>
+
+Добро пожаловать в официальную документацию ER:LC Россия API. Здесь вы найдете все необходимые инструменты, руководства и справочные материалы для интеграции вашего игрового сервера с внешними сервисами.
+
+<div className="flex justify-center items-center w-full">
+  <h2 className="text-2xl font-bold">Быстрое Начало</h2>
+</div>
+
+<div className="grid grid-cols-2 gap-4">
+  <a href="/api-use-guidelines" className="flex flex-col rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors text-inherit no-underline">
+    <div><img src="/images/api-rules.png" className="w-full h-44 object-cover block m-0" noZoom /></div>
+    <div className="p-4">
+      <h3 className="text-lg font-semibold mt-0 mb-1">Правила Использования API</h3>
+      <p className="text-sm text-gray-500 m-0">Узнайте, как правильно работать с API, чтобы избежать блокировок и ошибок.</p>
+    </div>
+  </a>
+  <a href="/for-developers/api-v2/introduction" className="flex flex-col rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors text-inherit no-underline">
+    <div><img src="/images/api-v2.png" className="w-full h-44 object-cover block m-0" noZoom /></div>
+    <div className="p-4">
+      <h3 className="text-lg font-semibold mt-0 mb-1">Документация API V2</h3>
+      <p className="text-sm text-gray-500 m-0">Отправка запросов, обработка ответов, новые возможности и миграция с V1.</p>
+    </div>
+  </a>
+  <a href="/for-developers/api-v1/introduction" className="flex flex-col rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-colors text-inherit no-underline">
+    <div><img src="/images/api-v1.png" className="w-full h-44 object-cover block m-0" noZoom /></div>
+    <div className="p-4">
+      <h3 className="text-lg font-semibold mt-0 mb-1">Документация API V1</h3>
+      <p className="text-sm text-gray-500 m-0">Техническое руководство по интеграции: от авторизации до обработки ответов.</p>
+    </div>
+  </a>
+</div>
+
+## Справочные Материалы
+
+<Columns cols={2}>
+  <Card
+    title="Лимиты Запросов"
+    icon="gauge"
+    href="/for-developers/rate-limits"
+  >
+    Информация о глобальных лимитах, защите от спама и заголовках Rate Limit.
+  </Card>
+  <Card
+    title="Коды Ошибок"
+    icon="triangle-exclamation"
+    href="/for-developers/error-codes"
+  >
+    Полный список кодов ошибок, их описание и рекомендации по обработке.
+  </Card>
+</Columns>
+
+---
+
+© 2026 ER:LC Россия. Все права защищены.

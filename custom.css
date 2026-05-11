@@ -1,0 +1,41 @@
+#topbar-cta-button {
+  background: #02B1DA !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
+  width: 80px !important;
+  height: 37px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+}
+
+#topbar-cta-button svg {
+  display: none !important;
+}
+
+#topbar-cta-button,
+#topbar-cta-button span,
+#topbar-cta-button a,
+#topbar-cta-button svg,
+#topbar-cta-button svg path {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+}
+
+#topbar-cta-button:hover {
+  background: #0190B3 !important;
+}
+
+#topbar-cta-button:hover,
+#topbar-cta-button:hover span,
+#topbar-cta-button:hover a,
+#topbar-cta-button:hover svg,
+#topbar-cta-button:hover svg path {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}

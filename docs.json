@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "palm",
-  "name": "ER:LC Россия",
+  "name": "ER:LC Россия API",
   "colors": {
     "primary": "#02B1DA",
     "light": "#02B1DA",
@@ -15,8 +15,8 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Сообщество",
-          "href": "https://discord.gg/your-link",
+          "anchor": "Наш Discord",
+          "href": "https://discord.gg/MoscowRus",
           "icon": "discord"
         }
       ]
@@ -26,53 +26,58 @@
         "language": "ru",
         "tabs": [
           {
-            "tab": "Правила Сервера",
+            "tab": "API",
             "groups": [
               {
                 "group": "Начало",
                 "pages": [
-                  "introduction"
+                  "introduction",
+                  "api-use-guidelines"
                 ]
               },
               {
-                "group": "РП Термины",
+                "group": "API V1",
                 "pages": [
-                  "rules/basic-terms",
-                  "rules/server-rules"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "Техническая часть",
-            "groups": [
-              {
-                "group": "Системы",
-                "pages": [
-                  "tech/proxilink"
+                  "for-developers/api-v1/introduction",
+                  "for-developers/api-v1/mrp-erlc-api-v1",
+                  "for-developers/api-v1/mrp-stats-api-v1"
                 ]
               },
               {
-                "group": "API",
+                "group": "API V2",
                 "pages": [
-                  "api-reference/introduction"
+                  "for-developers/api-v2/introduction",
+                  {
+                    "group": "MRP ER:LC API V2",
+                    "pages": [
+                      "for-developers/api-v2/mrp-erlc-api-v2/introduction",
+                      "for-developers/api-v2/mrp-erlc-api-v2/erlc-location-information",
+                      "for-developers/api-v2/mrp-erlc-api-v2/event-webhook"
+                    ]
+                  },
+                  {
+                    "group": "MRP API Экономики V2",
+                    "pages": [
+                      "for-developers/api-v2/mrp-civops-api-v2/introduction",
+                      "for-developers/api-v2/mrp-civops-api-v2/mrp-get-endpoints-civops-api-v2",
+                      "for-developers/api-v2/mrp-civops-api-v2/mrp-post-endpoints-civops-api-v2"
+                    ]
+                  },
+                  "for-developers/api-v2/mrp-stats-api-v2",
+                  "for-developers/api-v2/cluecontrol-m-v2"
+                ]
+              },
+              {
+                "group": "Справочник",
+                "pages": [
+                  "for-developers/rate-limits",
+                  "for-developers/error-codes"
                 ]
               }
             ]
           }
         ],
         "default": true
-      },
-      {
-        "language": "en",
-        "tabs": [
-          {
-            "tab": "Untitled Tab",
-            "pages": [
-              "fsfefw"
-            ]
-          }
-        ]
       }
     ]
   },
@@ -114,8 +119,5 @@
     "color": {
       "dark": "#1D1D1D"
     }
-  },
-  "banner": {
-    "content": "ER"
   }
 }
