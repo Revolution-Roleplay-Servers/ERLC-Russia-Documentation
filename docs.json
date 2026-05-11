@@ -12,43 +12,6 @@
     "dark": "/favicon.png"
   },
   "navigation": {
-    "tabs": [
-      {
-        "tab": "Правила Сервера",
-        "groups": [
-          {
-            "group": "Начало",
-            "pages": [
-              "introduction"
-            ]
-          },
-          {
-            "group": "РП Термины",
-            "pages": [
-              "rules/basic-terms",
-              "rules/server-rules"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Техническая часть",
-        "groups": [
-          {
-            "group": "Системы",
-            "pages": [
-              "tech/proxilink"
-            ]
-          },
-          {
-            "group": "API",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          }
-        ]
-      }
-    ],
     "global": {
       "anchors": [
         {
@@ -57,7 +20,49 @@
           "icon": "discord"
         }
       ]
-    }
+    },
+    "languages": [
+      {
+        "language": "ru",
+        "tabs": [
+          {
+            "tab": "Правила Сервера",
+            "groups": [
+              {
+                "group": "Начало",
+                "pages": [
+                  "introduction"
+                ]
+              },
+              {
+                "group": "РП Термины",
+                "pages": [
+                  "rules/basic-terms",
+                  "rules/server-rules"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Техническая часть",
+            "groups": [
+              {
+                "group": "Системы",
+                "pages": [
+                  "tech/proxilink"
+                ]
+              },
+              {
+                "group": "API",
+                "pages": [
+                  "api-reference/introduction"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   "logo": {
     "light": "/logo/light.png",
