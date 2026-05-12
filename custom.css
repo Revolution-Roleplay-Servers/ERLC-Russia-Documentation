@@ -38,7 +38,20 @@
   color: #ffffff !important;
   fill: #ffffff !important;
   stroke: #ffffff !important;
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
+
+#topbar-cta-button:hover *,
+#topbar-cta-button:hover *::before,
+#topbar-cta-button:hover *::after {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
 
 /* 1. Скрываем стандартную иконку */
 footer a[href*="tiktok.com"] svg {
