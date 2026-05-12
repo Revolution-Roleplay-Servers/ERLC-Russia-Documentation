@@ -1,0 +1,1137 @@
+openapi: 3.1.0
+info:
+  title: Moscow RolePlay API - ERLC v2 Endpoints
+  description: |
+    Эндпоинты для управления сервером ERLC v2 API.
+
+    ## Что нового в API v2?
+
+    PRC API v2 предоставляет более согласованную и простую модель запросов для разработчиков.
+    Также включает запрашиваемые данные, такие как местоположение игроков и цвета транспорта!
+
+    API v1 продолжает работать без существенных изменений.
+
+    ## Rate Limits (Ограничения запросов)
+
+    | Эндпоинт | Лимит |
+    |----------|-------|
+    | `/moscowroleplay/erlc/server/*` (кроме command) | 120 запросов/мин |
+    | `/moscowroleplay/erlc/server/command` | Очередь: 100 команд |
+
+    При превышении лимита возвращается **HTTP 429**.
+
+    ## Формат Ответа Об Ошибке
+
+    Все ошибки возвращаются в формате JSON с полями `code` и `message`:
+
+    ```json
+    {
+        "code": 5007,
+        "message": "missing_token"
+    }
+    ```
+
+    ## Коды Ошибок
+
+    ### Ошибки Аутентификации и Доступа
+
+    | Код | Статус | Описание |
+    |-----|--------|----------|
+    | 5006 | 401 | invalid_master_key |
+    | 5007 | 401 | missing_token |
+    | 5008 | 401 | invalid_token |
+    | 5009 | 403 | forbidden |
+    | 5010 | 403 | api_version_forbidden |
+    | 5011 | 403 | query_param_forbidden |
+
+    ### Ошибки PRC API
+
+    Эндпоинты используют внешний PRC API и могут возвращать ошибки:
+
+    | Код PRC | Описание |
+    |---------|----------|
+    | 2002 | Invalid or expired server-key |
+    | 3002 | Server is offline |
+    | 4001 | Rate limited |
+    | 9999 | Module out of date |
+
+    При ошибке PRC API возвращается:
+
+    ```json
+    {
+        "code": 5019,
+        "message": "prc_api_error",
+        "prc_code": 2002,
+        "prc_message": "Invalid or expired server-key"
+    }
+    ```
+
+    Базовый URL: `https://api.erlcrussia.xyz/v2`
+  version: 2.0.0
+servers:
+  - url: https://api.erlcrussia.xyz/v2
+    description: Production
+tags:
+  - name: ERLC v2
+    description: Данные игрового сервера ER:LC v2 API и управление им.
+paths:
+  /moscowroleplay/erlc/server:
+    get:
+      tags:
+        - ERLC v2
+      summary: Информация о Сервере ER:LC
+      description: |
+        Получение общей информации о сервере ER:LC.
+        
+        Дополнительные поля могут быть включены путём установки query-параметров в значение 'true'.
+        Все query-параметры необязательны.
+      security:
+        - MRPAPIKey: []
+      parameters:
+        - name: Players
+          in: query
+          description: Включить список игроков в ответ.
+          required: false
+          schema:
+            type: boolean
+        - name: Staff
+          in: query
+          description: Включить список персонала (Admins, Mods, Helpers) в ответ.
+          required: false
+          schema:
+            type: boolean
+        - name: JoinLogs
+          in: query
+          description: Включить логи входов/выходов в ответ.
+          required: false
+          schema:
+            type: boolean
+        - name: Queue
+          in: query
+          description: Включить данные очереди в ответ.
+          required: false
+          schema:
+            type: boolean
+        - name: KillLogs
+          in: query
+          description: Включить логи убийств в ответ.
+          required: false
+          schema:
+            type: boolean
+        - name: CommandLogs
+          in: query
+          description: Включить логи команд в ответ.
+          required: false
+          schema:
+            type: boolean
+        - name: ModCalls
+          in: query
+          description: Включить логи вызовов модераторов в ответ.
+          required: false
+          schema:
+            type: boolean
+        - name: EmergencyCalls
+          in: query
+          description: Включить логи вызовов экстренных служб в ответ.
+          required: false
+          schema:
+            type: boolean
+        - name: Vehicles
+          in: query
+          description: Включить список транспорта в ответ.
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Успешный ответ с информацией о сервере. Дополнительные поля включаются только при соответствующих query-параметрах.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerInfoV2'
+              examples:
+                FullInfo:
+                  summary: Полная информация о сервере.
+                  value:
+                    Name: API Test
+                    OwnerId: 1
+                    CoOwnerIds:
+                      - 1
+                    CurrentPlayers: 1
+                    MaxPlayers: 1
+                    JoinKey: APIServer
+                    AccVerifiedReq: Disabled
+                    TeamBalance: true
+                    Players:
+                      - Team: Sheriff
+                        Player: PlayerName:Id
+                        Callsign: 5D-550
+                        Location:
+                          LocationX: 1084.965
+                          LocationZ: 2302.28
+                          PostalCode: "218"
+                          StreetName: Park Street
+                          BuildingNumber: "2083"
+                        Permission: Normal / Server Administrator / Server Owner / Server Co-Owner / Server Moderator
+                        WantedStars: 0
+                    Staff:
+                      Admins:
+                        "54249787": Black_Hallow
+                        "77573259": sli_ckk
+                      Mods:
+                        "2": JohnDoe
+                        "3": JaneDoe
+                      Helpers:
+                        "168691872": Flat_bird
+                    JoinLogs:
+                      - Join: true
+                        Timestamp: 1704614400
+                        Player: PlayerName:Id
+                    Queue:
+                      - 1
+                    KillLogs:
+                      - Killed: PlayerName:Id
+                        Timestamp: 1704614400
+                        Killer: PlayerName:Id
+                    CommandLogs:
+                      - Player: PlayerName:Id
+                        Timestamp: 1704614400
+                        Command: ":h"
+                    ModCalls:
+                      - Caller: PlayerName:Id
+                        Moderator: PlayerName:Id
+                        Timestamp: 1704614400
+                    EmergencyCalls:
+                        - Team: Police
+                          Caller: 68691872
+                          Players:
+                            - 789012
+                          Position:
+                            - -654.6
+                            - 666.5
+                          StartedAt: 1774216563
+                          CallNumber: 43
+                          Description: stg
+                          PositionDescriptor: sdfsdfsdf
+                    Vehicles:
+                      - Name: Redline Fire Engine
+                        Owner: Shawnyg
+                        Texture: Livery Name
+                        ColorHex: "#ff4444"
+                        ColorName: Super Red
+                BasicInfo:
+                  summary: Базовая информация о сервере.
+                  value:
+                    Name: API Test
+                    OwnerId: 1
+                    CoOwnerIds:
+                      - 1
+                    CurrentPlayers: 1
+                    MaxPlayers: 1
+                    JoinKey: APIServer
+                    AccVerifiedReq: Disabled
+                    TeamBalance: true
+                WithPlayers:
+                  summary: С информацией об игроках.
+                  value:
+                    Name: Moscow RolePlay
+                    OwnerId: 123456
+                    CoOwnerIds:
+                      - 789012
+                    CurrentPlayers: 50
+                    MaxPlayers: 100
+                    JoinKey: MRPServer
+                    AccVerifiedReq: Email
+                    TeamBalance: true
+                    Players:
+                      - Team: Police
+                        Player: OfficerName:123456
+                        Callsign: Alpha-1
+                        Location:
+                          LocationX: 123.45
+                          LocationZ: 67.89
+                          PostalCode: "101000"
+                          StreetName: Park Street
+                          BuildingNumber: "1"
+                        Permission: Normal / Server Administrator / Server Owner / Server Co-Owner / Server Moderator
+                        WantedStars: 0
+                      - Team: Civilian
+                        Player: PlayerName:789012
+                        Callsign: null
+                        Permission: Normal / Server Administrator / Server Owner / Server Co-Owner / Server Moderator
+                        WantedStars: 0
+                WithStaff:
+                  summary: С информацией о персонале.
+                  value:
+                    Name: Moscow RolePlay
+                    OwnerId: 123456
+                    CoOwnerIds:
+                      - 789012
+                    CurrentPlayers: 50
+                    MaxPlayers: 100
+                    JoinKey: MRPServer
+                    AccVerifiedReq: Email
+                    TeamBalance: true
+                    Staff:
+                      Admins:
+                        "54249787": Black_Hallow
+                        "77573259": sli_ckk
+                      Mods:
+                        "123456": ModeratorName
+                      Helpers:
+                        "789012": HelperName
+                WithJoinLogs:
+                  summary: С логами входов/выходов.
+                  value:
+                    Name: Moscow RolePlay
+                    OwnerId: 123456
+                    CoOwnerIds:
+                      - 789012
+                    CurrentPlayers: 50
+                    MaxPlayers: 100
+                    JoinKey: MRPServer
+                    AccVerifiedReq: Email
+                    TeamBalance: true
+                    JoinLogs:
+                      - Join: true
+                        Timestamp: 1704614400
+                        Player: PlayerName:123456
+                      - Join: false
+                        Timestamp: 1704614500
+                        Player: OfficerName:789012
+                WithQueue:
+                  summary: С информацией об очереди.
+                  value:
+                    Name: Moscow RolePlay
+                    OwnerId: 123456
+                    CoOwnerIds:
+                      - 789012
+                    CurrentPlayers: 100
+                    MaxPlayers: 100
+                    JoinKey: MRPServer
+                    AccVerifiedReq: Email
+                    TeamBalance: true
+                    Queue:
+                      - 1
+                      - 2
+                      - 3
+                WithKillLogs:
+                  summary: С логами убийств.
+                  value:
+                    Name: Moscow RolePlay
+                    OwnerId: 123456
+                    CoOwnerIds:
+                      - 789012
+                    CurrentPlayers: 50
+                    MaxPlayers: 100
+                    JoinKey: MRPServer
+                    AccVerifiedReq: Email
+                    TeamBalance: true
+                    KillLogs:
+                      - Killed: PlayerName:123456
+                        Timestamp: 1704614400
+                        Killer: PlayerName:789012
+                      - Killed: OfficerName:111111
+                        Timestamp: 1704614500
+                        Killer: AttackerName:222222
+                WithCommandLogs:
+                  summary: С логами команд.
+                  value:
+                    Name: Moscow RolePlay
+                    OwnerId: 123456
+                    CoOwnerIds:
+                      - 789012
+                    CurrentPlayers: 50
+                    MaxPlayers: 100
+                    JoinKey: MRPServer
+                    AccVerifiedReq: Email
+                    TeamBalance: true
+                    CommandLogs:
+                      - Player: PlayerName:123456
+                        Timestamp: 1704614400
+                        Command: ":h Привет"
+                      - Player: OfficerName:789012
+                        Timestamp: 1704614500
+                        Command: ":kick PlayerName"
+                WithModCalls:
+                  summary: С логами вызовов модераторов.
+                  value:
+                    Name: Moscow RolePlay
+                    OwnerId: 123456
+                    CoOwnerIds:
+                      - 789012
+                    CurrentPlayers: 50
+                    MaxPlayers: 100
+                    JoinKey: MRPServer
+                    AccVerifiedReq: Email
+                    TeamBalance: true
+                    ModCalls:
+                      - Caller: PlayerName:123456
+                        Moderator: ModeratorName:789012
+                        Timestamp: 1704614400
+                      - Caller: PlayerName:222222
+                        Moderator: null
+                        Timestamp: 1704614500
+                WithEmergencyCalls:
+                  summary: С логами вызовов экстренных служб.
+                  value:
+                    Name: Moscow RolePlay
+                    OwnerId: 123456
+                    CoOwnerIds:
+                      - 789012
+                    CurrentPlayers: 50
+                    MaxPlayers: 100
+                    JoinKey: MRPServer
+                    AccVerifiedReq: Email
+                    TeamBalance: true
+                    EmergencyCalls:
+                      - Team: Sheriff
+                        Caller: 123456
+                        Players:
+                          - 123456
+                          - 789012
+                        Position:
+                          - 1084.965
+                          - 2302.28
+                        StartedAt: 1704614400
+                        CallNumber: 42
+                        Description: Robbery in progress
+                        PositionDescriptor: Near Police Department
+                      - Team: Police
+                        Caller: 789012
+                        Players:
+                          - 789012
+                        Position:
+                          - 123.45
+                          - 67.89
+                        StartedAt: 1704614500
+                        CallNumber: 43
+                        Description: Traffic accident
+                        PositionDescriptor: Main Street intersection
+                WithVehicles:
+                  summary: С информацией о транспорте.
+                  value:
+                    Name: Moscow RolePlay
+                    OwnerId: 123456
+                    CoOwnerIds:
+                      - 789012
+                    CurrentPlayers: 50
+                    MaxPlayers: 100
+                    JoinKey: MRPServer
+                    AccVerifiedReq: Email
+                    TeamBalance: true
+                    Vehicles:
+                      - Name: 2024 Falcon Interceptor Utility
+                        Owner: Pancakeboyman_8
+                        Texture: Standard
+                        ColorHex: "#FF0000"
+                        ColorName: Red
+                      - Name: 2023 Chevrolet Tahoe PPV
+                        Owner: OfficerName:123456
+                        Texture: Police
+                        ColorHex: "#000000"
+                        ColorName: Black
+        '401':
+          $ref: '#/components/responses/UnauthorizedMissingOrInvalidToken'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '400':
+          $ref: '#/components/responses/PRCAPIError'
+
+  /moscowroleplay/erlc/server/command:
+    post:
+      tags:
+        - ERLC v2
+      summary: Выполнение Команды на Сервере
+      description: |
+        Отправляет команду на выполнение на сервер ER:LC.
+
+
+        Команды добавляются в глобальную очередь с ограничением на максимальное
+        количество команд.
+
+
+        **Примечание:** Этот эндпоинт **не подвержен** Rate Limiting (120 запросов/мин).
+      security:
+        - MRPAPIKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - command
+              properties:
+                command:
+                  type: string
+                  description: Команда для выполнения на сервере.
+                  example: ":h Всем Привет"
+      responses:
+        '200':
+          description: Команда успешно добавлена в очередь.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Status:
+                    type: string
+                    description: Статус команды.
+                    example: Queued
+                  QueueSize:
+                    type: integer
+                    description: Текущий размер очереди команд.
+                    example: 5
+              examples:
+                success:
+                  summary: Команда добавлена в очередь.
+                  value:
+                    Status: Queued
+                    QueueSize: 5
+        '400':
+          description: Ошибка запроса (отсутствует команда).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingCommandError'
+              examples:
+                missing_command:
+                  summary: Отсутствует поле command.
+                  value:
+                    code: 5005
+                    message: MissingCommand
+        '401':
+          $ref: '#/components/responses/UnauthorizedMissingOrInvalidToken'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          description: Очередь команд заполнена.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandQueueFullError'
+              examples:
+                queue_full:
+                  summary: Очередь команд заполнена.
+                  value:
+                    code: 5015
+                    message: CommandQueueFull
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    MRPAPIKey:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: |
+        Стандартный API ключ для доступа к ER:LC эндпоинтам.
+
+        Передается в заголовке `Authorization: Bearer <ключ>`.
+
+        ОБЯЗАТЕЛЕН ДЛЯ ВСЕХ ER:LC ЭНДПОИНТОВ.
+  responses:
+    UnauthorizedMissingOrInvalidToken:
+      description: Ошибка аутентификации.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+          examples:
+            missing_token:
+              summary: Нет токена.
+              value:
+                code: 5007
+                message: missing_token
+            invalid_token:
+              summary: Неверный или деактивированный токен.
+              value:
+                code: 5008
+                message: invalid_token
+            invalid_master_key:
+              summary: Неверный мастер-ключ.
+              value:
+                code: 5006
+                message: invalid_master_key
+    Forbidden:
+      description: Доступ запрещён.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ForbiddenError'
+          examples:
+            forbidden:
+              summary: Нет прав доступа к эндпоинту.
+              value:
+                code: 5009
+                message: forbidden
+            api_version_forbidden:
+              summary: Доступ к этой версии API запрещён.
+              value:
+                code: 5010
+                message: api_version_forbidden
+            query_param_forbidden:
+              summary: Query-параметр запрещён.
+              value:
+                code: 5011
+                message: query_param_forbidden
+    TooManyRequests:
+      description: Превышено количество запросов (лимит 120/мин) или обнаружен спам (400+ лишних запросов).
+      headers:
+        X-RateLimit-Limit:
+          description: Максимум запросов в минуту.
+          schema:
+            type: integer
+            example: 120
+        X-RateLimit-Remaining:
+          description: Оставшееся количество запросов.
+          schema:
+            type: integer
+            example: 0
+        X-RateLimit-Reset:
+          description: Unix timestamp (мс), когда лимит будет сброшен.
+          schema:
+            type: integer
+            example: 1740339600000
+        Retry-After:
+          description: Секунд до сброса лимита.
+          schema:
+            type: integer
+            example: 45
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/RateLimitError'
+              - $ref: '#/components/schemas/SpamBlockedError'
+          examples:
+            rate_limit_exceeded:
+              summary: Превышение лимита 120 запросов/мин.
+              value:
+                code: 5016
+                message: rate_limit_exceeded
+                retry_after: 45
+                details:
+                  limit: 120
+                  count: 125
+                  excess: 5
+                  reset_at: 1740339600000
+            spam_blocked:
+              summary: Бан за спам (400+ лишних запросов).
+              value:
+                code: 5023
+                message: spam_blocked
+                blocked_until: 1740339900000
+                remaining_seconds: 300
+    PRCAPIError:
+      description: Ошибка от внешнего ER:LC API (PRC).
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 5019
+              message:
+                type: string
+                example: prc_api_error
+              prc_code:
+                type: integer
+                description: Код ошибки ER:LC API.
+              prc_message:
+                type: string
+                description: Описание ошибки.
+          examples:
+            expired_server_key:
+              summary: Server-Key недействителен или истёк.
+              value:
+                code: 5019
+                message: prc_api_error
+                prc_code: 2002
+                prc_message: Invalid or expired server-key
+            server_offline:
+              summary: Сервер офлайн (нет игроков).
+              value:
+                code: 5019
+                message: prc_api_error
+                prc_code: 3002
+                prc_message: Server is offline (no players)
+            module_outdated:
+              summary: Модуль на сервере устарел.
+              value:
+                code: 5019
+                message: prc_api_error
+                prc_code: 9999
+                prc_message: In-game server module is out of date
+    InternalServerError:
+      description: Внутренняя ошибка сервера.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            server_error:
+              summary: Ошибка внешнего ER:LC API.
+              value:
+                code: 5018
+                message: server_error
+  schemas:
+    ErrorResponse:
+      type: object
+      description: Стандартный формат ошибки.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Код ошибки API.
+          example: 5007
+        message:
+          type: string
+          description: Сообщение/идентификатор ошибки.
+          example: missing_token
+    UnauthorizedError:
+      type: object
+      description: Ошибка аутентификации (отсутствует или неверный токен).
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 5007
+        message:
+          type: string
+          example: missing_token
+    ForbiddenError:
+      type: object
+      description: Ошибка доступа (запрещено).
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 5009
+        message:
+          type: string
+          example: forbidden
+    MissingCommandError:
+      type: object
+      description: Ошибка при отсутствии команды в запросе.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 5005
+        message:
+          type: string
+          example: MissingCommand
+    CommandQueueFullError:
+      type: object
+      description: Ошибка при заполненной очереди команд. Возвращается при попытке отправить команду, когда очередь заполнена.
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 5015
+        message:
+          type: string
+          example: CommandQueueFull
+    RateLimitError:
+      type: object
+      description: Ошибка превышения лимита запросов (120/мин). Возвращает details с информацией о счётчике.
+      required:
+        - code
+        - message
+        - retry_after
+        - details
+      properties:
+        code:
+          type: integer
+          example: 5016
+        message:
+          type: string
+          example: rate_limit_exceeded
+        retry_after:
+          type: integer
+          description: Время до сброса лимита в секундах.
+          example: 45
+        details:
+          type: object
+          properties:
+            limit:
+              type: integer
+              description: Лимит запросов в минуту.
+              example: 120
+            count:
+              type: integer
+              description: Текущее количество запросов.
+              example: 125
+            excess:
+              type: integer
+              description: Количество лишних запросов (сверх лимита).
+              example: 5
+            reset_at:
+              type: integer
+              description: Unix timestamp (мс) сброса лимита.
+              example: 1740339600000
+    SpamBlockedError:
+      type: object
+      description: Блокировка за спам. Выдаётся при 400+ лишних запросах. Бан на 5 минут + дополнительные минуты за продолжение спама.
+      required:
+        - code
+        - message
+        - blocked_until
+        - remaining_seconds
+      properties:
+        code:
+          type: integer
+          example: 5023
+        message:
+          type: string
+          example: spam_blocked
+        blocked_until:
+          type: integer
+          description: Unix timestamp (мс) окончания блокировки.
+          example: 1740339900000
+        remaining_seconds:
+          type: integer
+          description: Осталось секунд до разблокировки.
+          example: 300
+    ServerInfoV2:
+      type: object
+      description: |
+        Информация о сервере ER:LC v2 API.
+
+        Дополнительные поля (Players, Staff, JoinLogs, Queue, KillLogs, CommandLogs, ModCalls, Vehicles)
+        включаются только при соответствующих query-параметрах.
+      required:
+        - Name
+        - OwnerId
+        - CoOwnerIds
+        - CurrentPlayers
+        - MaxPlayers
+        - JoinKey
+        - AccVerifiedReq
+        - TeamBalance
+      properties:
+        Name:
+          type: string
+          description: Название сервера.
+          example: Moscow RolePlay
+        OwnerId:
+          type: integer
+          description: Discord ID владельца сервера.
+          example: 123456
+        CoOwnerIds:
+          type: array
+          description: Массив Discord ID совладельцев сервера.
+          items:
+            type: integer
+          example:
+            - 789012
+        CurrentPlayers:
+          type: integer
+          description: Текущее количество игроков на сервере.
+          example: 50
+        MaxPlayers:
+          type: integer
+          description: Максимальное количество игроков.
+          example: 100
+        JoinKey:
+          type: string
+          description: Ключ для подключения к серверу.
+          example: MRPServer
+        AccVerifiedReq:
+          type: string
+          description: Требование верификации аккаунта (Disabled/Email/Phone/ID).
+          example: Email
+        TeamBalance:
+          type: boolean
+          description: Включён ли баланс команд.
+          example: true
+        Players:
+          type: array
+          description: Список игроков. Включается только при query-параметре Players=true.
+          items:
+            $ref: '#/components/schemas/PlayerV2'
+        Staff:
+          $ref: '#/components/schemas/Staff'
+        JoinLogs:
+          type: array
+          description: Логи входов/выходов. Включается только при query-параметре JoinLogs=true.
+          items:
+            $ref: '#/components/schemas/JoinLog'
+        Queue:
+          type: array
+          description: Очередь на сервер. Включается только при query-параметре Queue=true.
+          items:
+            type: integer
+          example:
+            - 1
+            - 2
+            - 3
+        KillLogs:
+          type: array
+          description: Логи убийств. Включается только при query-параметре KillLogs=true.
+          items:
+            $ref: '#/components/schemas/KillLog'
+        CommandLogs:
+          type: array
+          description: Логи команд. Включается только при query-параметре CommandLogs=true.
+          items:
+            $ref: '#/components/schemas/CommandLog'
+        ModCalls:
+          type: array
+          description: Логи вызовов модераторов. Включается только при query-параметре ModCalls=true.
+          items:
+            $ref: '#/components/schemas/ModCallLog'
+        EmergencyCalls:
+          type: array
+          description: Логи вызовов экстренных служб. Включается только при query-параметре EmergencyCalls=true.
+          items:
+            $ref: '#/components/schemas/EmergencyCall'
+        Vehicles:
+          type: array
+          description: Список транспорта. Включается только при query-параметре Vehicles=true.
+          items:
+            $ref: '#/components/schemas/VehicleV2'
+    PlayerV2:
+      type: object
+      description: Информация об игроке в v2 API (с местоположением).
+      properties:
+        Team:
+          type: string
+          description: Команда игрока.
+          example: Police
+        Player:
+          type: string
+          description: Имя игрока и его ID в формате PlayerName:Id.
+          example: OfficerName:123456
+        Callsign:
+          type:
+            - string
+            - 'null'
+          description: Позывной игрока (доступно только если игрок не в гражданской команде).
+          example: Alpha-1
+        Location:
+          $ref: '#/components/schemas/PlayerLocation  '
+        Permission:
+          type: string
+          description: Уровень разрешений игрока.
+          enum:
+            - Normal
+            - Server Administrator
+            - Server Owner
+            - Server Co-Owner
+            - Server Moderator
+        WantedStars:
+          type: integer
+          description: Количество звёзд розыска.
+          example: 0
+    PlayerLocation:
+      type: object
+      description: Информация о местоположении игрока.
+      properties:
+        LocationX:
+          type: number
+          description: X координата местоположения.
+          example: 123.45
+        LocationZ:
+          type: number
+          description: Z координата местоположения.
+          example: 67.89
+        PostalCode:
+          type: string
+          description: Почтовый индекс.
+          example: "101000"
+        StreetName:
+          type: string
+          description: Название улицы.
+          example: Тверская улица
+        BuildingNumber:
+          type: string
+          description: Номер здания.
+          example: "1"
+    Staff:
+      type: object
+      description: Информация о персонале сервера.
+      properties:
+        Admins:
+          type: object
+          description: Карта Roblox user ID к именам для администраторов сервера.
+          additionalProperties: false
+          patternProperties:
+            ^[0-9]+$:
+              type: string
+              description: Имя игрока Roblox.
+          example:
+            "54249787": Black_Hallow
+            "77573259": sli_ckk
+        Mods:
+          type: object
+          description: Карта Roblox user ID к именам для модераторов сервера.
+          additionalProperties: false
+          patternProperties:
+            ^[0-9]+$:
+              type: string
+              description: Имя игрока Roblox.
+          example:
+            "123456": ModeratorName
+        Helpers:
+          type: object
+          description: Карта Roblox user ID к именам для хелперов сервера.
+          additionalProperties: false
+          patternProperties:
+            ^[0-9]+$:
+              type: string
+              description: Имя игрока Roblox.
+          example:
+            "789012": HelperName
+    JoinLog:
+      type: object
+      properties:
+        Join:
+          type: boolean
+          description: true если игрок зашёл, false если вышел.
+          example: true
+        Timestamp:
+          type: integer
+          description: Unix timestamp события.
+          example: 1704614400
+        Player:
+          type: string
+          description: Имя игрока и его ID в формате PlayerName:Id.
+          example: PlayerName:123456
+    KillLog:
+      type: object
+      properties:
+        Killed:
+          type: string
+          description: Имя убитого игрока и его ID в формате PlayerName:Id.
+          example: PlayerName:123456
+        Timestamp:
+          type: integer
+          description: Unix timestamp события.
+          example: 1704614400
+        Killer:
+          type: string
+          description: Имя убийцы и его ID в формате PlayerName:Id.
+          example: PlayerName:789012
+    CommandLog:
+      type: object
+      properties:
+        Player:
+          type: string
+          description: Имя игрока и его ID в формате PlayerName:Id.
+          example: PlayerName:123456
+        Timestamp:
+          type: integer
+          description: Unix timestamp события.
+          example: 1704614400
+        Command:
+          type: string
+          description: Выполненная команда.
+          example: ":h Привет"
+    ModCallLog:
+      type: object
+      properties:
+        Caller:
+          type: string
+          description: Имя игрока вызвавшего модератора и его ID в формате PlayerName:Id.
+          example: PlayerName:123456
+        Moderator:
+          type:
+            - string
+            - 'null'
+          description: Имя модератора и его ID в формате PlayerName:Id, или null если никто не ответил.
+          example: ModeratorName:789012
+        Timestamp:
+          type: integer
+          description: Unix timestamp вызова.
+          example: 1704614400
+    EmergencyCall:
+      type: object
+      description: Информация о вызове экстренных служб.
+      properties:
+        Team:
+          type: string
+          description: Команда, которая приняла вызов.
+          example: Sheriff
+        Caller:
+          type: integer
+          description: Roblox ID игрока, который вызвал экстренную службу.
+          example: 123456
+        Players:
+          type: array
+          description: Массив Roblox ID игроков, участвующих в вызове.
+          items:
+            type: integer
+          example:
+            - 123456
+            - 789012
+        Position:
+          type: array
+          description: Координаты позиции вызова [X, Z].
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+          example:
+            - 1084.965
+            - 2302.28
+        StartedAt:
+          type: integer
+          description: Unix timestamp начала вызова.
+          example: 1704614400
+        CallNumber:
+          type: integer
+          description: Номер вызова.
+          example: 42
+        Description:
+          type: string
+          description: Описание вызова.
+          example: Robbery in progress
+        PositionDescriptor:
+          type: string
+          description: Описание местоположения.
+          example: Near Police Department
+    VehicleV2:
+      type: object
+      description: Информация о транспорте в v2 API (с цветами).
+      properties:
+        Name:
+          type: string
+          description: Название транспорта.
+          example: 2024 Falcon Interceptor Utility
+        Owner:
+          type: string
+          description: Владелец транспорта.
+          example: Pancakeboyman_8
+        Texture:
+          type:
+            - string
+            - 'null'
+          description: Текстура транспорта.
+          example: Standard
+        ColorHex:
+          type: string
+          description: HEX код цвета транспорта.
+          example: "#FF0000"
+        ColorName:
+          type: string
+          description: Название цвета транспорта.
+          example: Red

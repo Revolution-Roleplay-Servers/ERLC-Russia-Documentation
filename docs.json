@@ -199,5 +199,14 @@
     "color": {
       "dark": "#1D1D1D"
     }
+  },
+  "search": {
+    "prompt": "search"
+  },
+  "api": {
+    "openapi": "ru-erlc-v2-openapi.yaml",
+    "playground": {
+      "proxy": true
+    }
   }
 }
