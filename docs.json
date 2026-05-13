@@ -75,14 +75,14 @@
               {
                 "version": "API V1",
                 "pages": [
-                  "for-developers/api-v1/mrp-erlc-api-v1",
-                  "for-developers/api-v1/mrp-stats-api-v1"
+                  "api-reference/api-v1/mrp-erlc-api-v1",
+                  "api-reference/api-v1/mrp-stats-api-v1"
                 ]
               },
               {
                 "version": "API V2",
                 "pages": [
-                  "for-developers/api-v2/mrp-erlc-api-v2",
+                  "api-reference/api-v2/mrp-erlc-api-v2",
                   {
                     "group": "MRP ER:LC API V2",
                     "openapi": "/openapi/ru-erlc-v2-openapi.yaml"
@@ -91,9 +91,9 @@
                     "group": "MRP API Экономики V2",
                     "openapi": "openapi/ru-economy-v2-openapi.yaml"
                   },
-                  "for-developers/api-v2/mrp-stats-api-v2",
-                  "for-developers/api-v2/mrp-get-endpoints-civops-api-v2",
-                  "for-developers/api-v2/mrp-post-endpoints-civops-api-v2",
+                  "api-reference/api-v2/mrp-stats-api-v2",
+                  "api-reference/api-v2/mrp-get-endpoints-civops-api-v2",
+                  "api-reference/api-v2/mrp-post-endpoints-civops-api-v2",
                   "for-developers/api-v2/cluecontrol-m-v2"
                 ]
               }
