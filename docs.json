@@ -82,6 +82,13 @@
               {
                 "version": "API V2",
                 "pages": [
+                  {
+                    "group": "MRP ER:LC API V2",
+                    "openapi": "/openapi/ru-erlc-v2-openapi.yaml",
+                    "pages": [
+                      "untitled-page"
+                    ]
+                  },
                   "for-developers/api-v2/mrp-erlc-api-v2/introduction",
                   {
                     "group": "MRP API Экономики V2",
