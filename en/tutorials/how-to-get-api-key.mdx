@@ -1,0 +1,45 @@
+---
+title: "How to Get an API Key?"
+description: "Step-by-step guide to obtaining API keys, WebSocket access, and webhook management."
+---
+
+To integrate with our services, you will need appropriate access and authorization keys. Note that access to the HTTP API, WebSocket servers, and webhook management is separated for security reasons.
+
+## Getting Access
+
+<Steps>
+  <Step title="Opening a Ticket">
+    To initially gain access to the HTTP API, WebSocket, or webhook management system, you need to **open a ticket on our Discord server**. Describe your project and specify which features and access you will need for implementation.
+  </Step>
+  <Step title="Application Approval">
+    Wait for the project administration to review your request. Once your application is approved, the appropriate access rights will be linked to your Discord account.
+  </Step>
+  <Step title="Viewing and Managing Keys">
+    Once rights are granted, you can generate, view, and manage your tokens directly within the Discord server using slash commands.
+  </Step>
+</Steps>
+
+## Available Key Types and Commands
+
+### 1. HTTP API Key
+The main token used for sending standard HTTP requests to our endpoints. Passed in the `Authorization` header.
+* **View command:** `/api view`
+
+### 2. WebSocket Key
+For working with real-time events, a **separate independent key** is used. Do not try to use the standard HTTP token to connect to sockets — the server will reject it.
+* **View command:** `/websocket view`
+<Danger>
+  **Always keep your keys secret. WebSocket and HTTP API keys are completely autonomous and managed independently from each other.**
+</Danger>
+
+## Webhook Management
+
+If your service needs to receive automatic notifications about server events, you can set up webhooks.
+
+Access to the webhook management panel is also granted **strictly through tickets** with project administration. Once rights are linked to your account, a special configuration command will become available:
+
+* **Management command:** `/webhook manage`
+
+<Tip>
+  **When using this command, the bot will open a convenient menu where you can bind, remove, and view active URLs for sending webhooks.**
+</Tip>

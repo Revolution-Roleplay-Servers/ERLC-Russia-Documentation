@@ -1,0 +1,83 @@
+---
+title: "Rate Limits"
+description: "The ER:LC Russia API uses request rate limits to protect our servers from overload and ensure stable operation for everyone. Understanding how these limits work and how to handle them properly is essential for building a reliable integration."
+---
+
+## Limits Table
+
+| Endpoints | Limit | Description |
+| --------- | ----- | -------- |
+| `/v1/*` | **120 requests/min** | All API V1 endpoints |
+| `/v2/*` | **120 requests/min** | All API V2 endpoints |
+| `/v1/*/stats/*` | **20 requests/min** | Stats API V1 |
+| `/v2/*/stats/*` | **40/120 requests/min** | Stats API V2 (without token / with token) |
+
+### Rate Limit Exceeded Response Example
+
+```json
+{
+  "code": 5016,
+  "message": "Rate Limit Exceeded",
+  "retry_after": 45,
+  "details": {
+    "limit": 120,
+    "count": 125,
+    "excess": 5,
+    "reset_at": 1740339600000
+  }
+}
+```
+
+## Rate Limit Headers
+
+The API returns rate limit information headers in **every response**:
+
+| Header | Example Value | Description |
+| --------- | --------------- | -------- |
+| `X-RateLimit-Limit` | 120 | Maximum number of requests per minute |
+| `X-RateLimit-Remaining` | 115 | Remaining number of requests before reset |
+| `X-RateLimit-Reset` | _Unix timestamp_ | Time (ms) when the limit will be reset |
+| `Retry-After` | 45 | Seconds until limit reset (only on 429 error) |
+
+<Tip>
+  Always use the rate limit headers returned in each response to dynamically adjust your request frequency. **Do not hardcode limit values in your code — they may change and vary depending on the service.**
+</Tip>
+
+
+## Command Queue
+
+`*/command` endpoints use a queue system:
+
+- **Maximum queue size:** 100 commands
+- **Execution interval:** 1 command every 5 seconds
+
+When the queue is full, you will receive:
+
+```json
+{
+  "code": 5015,
+  "message": "Command Queue Full"
+}
+```
+
+## Anti-Spam Protection
+
+After exceeding the limit, the counter **does not stop** but continues counting **excess requests**.
+
+Upon reaching **400 excess requests**, a **5-minute ban** is issued. If spam continues, the ban duration increases.
+<Tip>
+  **Stats API V2:** Use a token to increase the limit from 40 to 120 requests/min. Pass the token via the `Authorization: Bearer <token>` header.
+</Tip>
+
+## Repeat Offenders
+
+Applications that continue sending requests after receiving `429` responses may be blocked for increasingly longer periods.
+
+<Danger>
+  Applications that systematically violate rate limits will be **blocked via Cloudflare**. If you encounter a Cloudflare block page, you need to contact us by opening an API ticket on the ER:LC Discord server to have the block lifted.
+</Danger>
+
+
+## Shared IP Hostings
+
+The ER:LC Russia API does not support BotGhost and similar hostings with shared IP addresses. When many different applications run under one IP, they constantly hit each other's rate limits, and there is no way to resolve this issue. For stable API access, host your service on a dedicated IP.

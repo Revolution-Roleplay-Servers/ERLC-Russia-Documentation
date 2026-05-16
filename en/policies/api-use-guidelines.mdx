@@ -1,0 +1,51 @@
+---
+title: "API Usage Guidelines"
+description: "Rules and responsibilities when accessing the ER:LC Russia API, including prohibited actions, token security, and community standards."
+---
+
+Using the ER:LC Russia API comes with a number of obligations. Whether you're building a Discord bot, a business website, or any other integration, you must strictly follow these rules to maintain API access and protect our community.
+
+## Scope of Support
+
+**We provide technical API support exclusively to developers who have direct access to their code**. If you are building a product for end users (e.g., a bot for other servers or your business), you are responsible for supporting them yourself. The ER:LC Russia development team will not resolve issues for users who are simply using your service.
+
+## Prohibited Actions
+
+<Danger>
+  The following actions are **strictly prohibited** and will result in **indefinite revocation** of API access (token blocking), as well as potential bans on our game servers and Discord:
+
+  * **Nuking, raiding, or crashing** servers and Discord channels with your application.
+  * **Abusing commands and bugs** of our API.
+  * **Impersonating** other players, project administration, or developers.
+  * **Spreading disinformation**, false information, or leaking confidential data.
+  * **Threats and blackmail** of users in any form.
+  * **Spam, flooding, and DDoS attacks** on API endpoints or related services.
+  * Any other destructive actions performed with malicious intent.
+  * **Non-compliance with the [official ER:LC API Rules](https://apidocs.erlc.gg/policies/aups)** when integrating our API for ER:LC.
+</Danger>
+
+### ER:LC Russia Community Rules
+
+The API must not be used for actions that violate the ER:LC Community Rules. They are available [**at this link**](https://wiki.erlcrussia.com).
+
+## Data and Access Key Security
+
+You are fully responsible for the security of your API keys, authorization tokens, and any data returned by the API.
+
+* Do not publish keys in public repositories (GitHub, GitLab, etc.).
+* Do not leave them in client-side code (frontend) where any user can copy them.
+* If your key has been compromised or leaked, **immediately notify us via a Discord ticket**. Ignoring a leak or failing to notify administration in a timely manner may result in **indefinite blocking** of your API access.
+
+## Optimization and Load
+
+If your service handles a large volume of requests, you are required to implement adequate **data caching**, **rate limiting**, and **proper error handling (e.g., 429 Too Many Requests)**.
+
+We reserve the right to temporarily or permanently restrict access for any application that overloads the server, blocks the Event Loop, degrades infrastructure performance, or poses a threat to project stability.
+
+## Reporting Vulnerabilities
+
+If you discover a critical error, a bypass exploit, or a security vulnerability affecting the ER:LC Russia API or its backend, immediately report it via a Discord ticket or email [**pancakeboyman_8@erlcrussia.com**](mailto:pancakeboyman_8@erlcrussia.com).
+
+<Warning>
+  **Public disclosure of vulnerabilities before they are fixed is strictly prohibited and is considered a malicious action.**
+</Warning>

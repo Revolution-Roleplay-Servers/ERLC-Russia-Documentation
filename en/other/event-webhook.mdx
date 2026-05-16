@@ -1,0 +1,89 @@
+---
+title: "Event Webhook"
+---
+
+To receive webhooks from the game:
+
+1. Type `/webhook manage` on our Discord server.
+2. In the menu that appears, specify the URL of your **custom** webhook.
+3. Before clicking the "Add" button, be sure to click the "Test" button.
+   - The system will send a test message. If it arrives — everything is configured correctly and the webhook is ready for use.
+4. After successful verification, click the "Add" button to activate data reception.
+
+<Danger>
+   **We do NOT support direct Discord webhooks. The system works exclusively with custom webhooks (your own handlers).**
+</Danger>
+
+Your endpoint must verify Ed25519 signatures on every request. The game will only save URLs that pass verification.
+
+---
+
+### Requirements
+
+#### Your endpoint must accept
+
+* `POST` requests with a JSON body.
+* These headers on every signed request:
+  * `X-Signature-Ed25519` (hex-encoded Ed25519 signature).
+  * `X-Signature-Timestamp` (Unix timestamp string).
+
+#### Your Endpoint Must:
+
+1. Read the **raw bytes of the request body** exactly as received (do not re-serialize JSON).
+2. Read `X-Signature-Timestamp`.
+3. Read `X-Signature-Ed25519`.
+4. Verify the signature for:
+
+   `message = timestamp + raw_body`
+
+   Where `timestamp` is the header value as a string, concatenated directly with the raw body bytes.
+5. Return:
+   * **2xx** only if the signature is valid.
+   * **4xx** if headers are missing, invalid, or signature verification fails.
+
+---
+
+### Public Key
+
+Use this Ed25519 public key (base64, SubjectPublicKeyInfo / SPKI):
+
+```
+MCowBQYDK2VwAyEArbRTkyh3A035YUWWZdyF3vck4QN3I7uU8cp7YaxocFE=
+```
+
+---
+
+### Implementation Details
+
+#### Input Data
+
+* `timestamp`: exact string from `X-Signature-Timestamp`.
+* `sigHex`: exact string from `X-Signature-Ed25519` (hex).
+* `rawBody`: raw bytes of the request body.
+
+#### Steps
+
+1. Decode `sigHex` from hex to bytes.
+2. Construct `message` as:
+   * `timestamp` bytes in UTF-8
+   * Immediately followed by `rawBody`
+3. Verify the Ed25519 signature using the public key above.
+
+#### Common Mistakes
+
+* Do not use a parsed JSON object for verification. Use only raw body bytes.
+* Do not add separators or spaces between the timestamp and body.
+* Treat the signature as hex, not base64.
+* Make sure your framework doesn't consume the body before you capture it.
+
+---
+
+### What events are sent?
+
+Currently, the game sends webhooks for:
+
+* Messages starting with **;**
+  * This allows creating custom in-game commands!
+* Emergency Calls
+
+New events may be added in the future. Note: the webhook system is not intended to replace HTTP API polling or WebSocket.

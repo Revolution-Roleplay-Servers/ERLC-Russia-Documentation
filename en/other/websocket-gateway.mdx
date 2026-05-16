@@ -1,0 +1,483 @@
+---
+title: "WebSocket Gateway"
+---
+
+The WebSocket Gateway allows you to receive ER:LC server data in real time without the need to continuously poll the REST API. By connecting to the gateway, you can subscribe to the data channels you're interested in and receive updates automatically.
+
+### Connection
+
+**URL:** `wss://api.erlcrussia.com/v2/gateway`
+
+When connecting to the HTTP endpoint (not WebSocket), a `426` error with code `5020` is returned.
+
+### Quick Start
+
+```js
+const ws = new WebSocket('wss://api.erlcrussia.com/v2/gateway');
+
+ws.on('open', () => {
+  console.log('Connected to Gateway');
+});
+
+ws.on('message', (data) => {
+  const message = JSON.parse(data.toString());
+  console.log('Received:', message);
+});
+```
+
+### Connection Lifecycle
+
+1. **Connect** — establish a WebSocket connection
+2. **Authenticate** — send `auth` with your token
+3. **Subscribe** — subscribe to desired channels via `subscribe`
+4. **Receive Data** — get real-time updates
+5. **Unsubscribe** — unsubscribe from channels via `unsubscribe`
+6. **Disconnect** — close the connection
+
+---
+
+## Client Messages
+
+All messages are sent in JSON format with an `action` field.
+
+### Authentication
+
+The first message that must be sent after connecting. Without authentication, all other actions will be rejected.
+
+```json
+{
+  "action": "auth",
+  "token": "your_ws_key"
+}
+```
+
+#### Success Response
+
+```json
+{
+  "code": 5128,
+  "discord_id": "123456789",
+  "timestamp": 1747267200000
+}
+```
+
+After successful authentication, a cache snapshot is automatically sent (if available).
+
+---
+
+### Channel Subscription
+
+Subscribe to one or more data channels.
+
+```json
+{
+  "action": "subscribe",
+  "channels": ["Server", "Players", "Queue"]
+}
+```
+
+Single channel via `channel` field is also supported:
+
+```json
+{
+  "action": "subscribe",
+  "channel": "Staff"
+}
+```
+
+#### Response
+
+```json
+{
+  "code": 5131,
+  "channels": ["Staff"]
+}
+```
+
+#### Subscription Denied
+
+If you don't have access to a specific channel:
+
+```json
+{
+  "code": 5130,
+  "channel": "Staff",
+  "message": "Access to channel \"Staff\" is forbidden"
+}
+```
+
+#### Response
+
+```json
+{
+  "code": 5131,
+  "channels": ["Server", "Players", "Queue"]
+}
+```
+
+#### Subscription Denied
+
+If you don't have access to a specific channel:
+
+```json
+{
+  "code": 5130,
+  "channel": "Staff",
+  "message": "Access to channel \"Staff\" is forbidden"
+}
+```
+
+---
+
+### Channel Unsubscription
+
+Unsubscribe from channels you no longer need.
+
+```json
+{
+  "action": "unsubscribe",
+  "channels": ["Queue", "KillLogs"]
+}
+```
+
+#### Response
+
+```json
+{
+  "code": 5132,
+  "channels": ["Queue", "KillLogs"]
+}
+```
+
+---
+
+### Cache Retrieval
+
+Request the current cache snapshot for your subscriptions.
+
+```json
+{
+  "action": "get_cache"
+}
+```
+
+Returns data only for channels you are subscribed to.
+
+---
+
+### Ping
+
+Connection check.
+
+```json
+{
+  "action": "ping"
+}
+```
+
+#### Response
+
+```json
+{
+  "code": 5129,
+  "timestamp": 1747267200000
+}
+```
+
+---
+
+## Data Channels
+
+| Channel | Description |
+| --- | --- |
+| `Server` | Server info: name, owner, players, join key |
+| `Players` | List of players on the server |
+| `Staff` | Server staff list |
+| `Queue` | Queue data |
+| `JoinLogs` | Player join/leave logs |
+| `KillLogs` | Kill logs |
+| `CommandLogs` | Command logs |
+| `ModCalls` | Moderator calls |
+| `EmergencyCalls` | Emergency calls |
+| `Vehicles` | Vehicle information |
+
+---
+
+## Channel Data Structure
+
+### `Server`
+
+```json
+{
+  "Name": "MRP | ER:LC Russia",
+  "OwnerId": "123456789",
+  "CoOwnerIds": ["987654321"],
+  "CurrentPlayers": 42,
+  "MaxPlayers": 100,
+  "JoinKey": "abc123",
+  "AccVerifiedReq": true,
+  "TeamBalance": false
+}
+```
+
+### `Players`
+
+```json
+{
+  "Players": [
+    {
+      "Name": "PlayerName",
+      "RoleId": 1,
+      "Team": "Police"
+    }
+  ]
+}
+```
+
+### `Staff`
+
+```json
+{
+  "Staff": [
+    {
+      "Name": "AdminName",
+      "Role": "Administrator",
+      "DiscordId": "123456789"
+    }
+  ]
+}
+```
+
+### `Queue`
+
+```json
+{
+  "Queue": [
+    {
+      "Name": "WaitingPlayer",
+      "Position": 1
+    }
+  ]
+}
+```
+
+### `JoinLogs`
+
+```json
+{
+  "JoinLogs": [
+    {
+      "PlayerName": "PlayerName",
+      "Action": "join",
+      "Timestamp": 1747267200000
+    }
+  ]
+}
+```
+
+### `KillLogs`
+
+```json
+{
+  "KillLogs": [
+    {
+      "Killer": "Player1",
+      "Victim": "Player2",
+      "Timestamp": 1747267200000
+    }
+  ]
+}
+```
+
+### `CommandLogs`
+
+```json
+{
+  "CommandLogs": [
+    {
+      "PlayerName": "PlayerName",
+      "Command": ":kill Player2",
+      "Timestamp": 1747267200000
+    }
+  ]
+}
+```
+
+### `ModCalls`
+
+```json
+{
+  "ModCalls": [
+    {
+      "Caller": "PlayerName",
+      "Reason": "Rule violation",
+      "Timestamp": 1747267200000
+    }
+  ]
+}
+```
+
+### `EmergencyCalls`
+
+```json
+{
+  "EmergencyCalls": [
+    {
+      "Caller": "PlayerName",
+      "Type": "emergency",
+      "Timestamp": 1747267200000
+    }
+  ]
+}
+```
+
+### `Vehicles`
+
+```json
+{
+  "Vehicles": [
+    {
+      "Name": "Police Car",
+      "Position": { "x": 0, "y": 0, "z": 0 }
+    }
+  ]
+}
+```
+
+---
+
+## Server Messages
+
+### Connection Event
+
+Sent immediately after the connection is established:
+
+```json
+{
+  "code": 5127,
+  "clientId": "192.168.1.1-1747267200000",
+  "timestamp": 1747267200000
+}
+```
+
+### Cache Update
+
+When server data changes, an updated snapshot is sent to all subscribed clients:
+
+```json
+{
+  "Name": "MRP | ER:LC Russia",
+  "CurrentPlayers": 43,
+  "Players": [...],
+  "Queue": [...]
+}
+```
+
+> Data is returned only for channels the client is subscribed to.
+
+### Empty Cache
+
+If the cache is unavailable:
+
+```json
+{
+  "code": 5133,
+  "timestamp": 1747267200000
+}
+```
+
+### Error
+
+```json
+{
+  "code": 5101,
+  "message": "Unknown action: invalid_action"
+}
+```
+
+---
+
+## Keep-Alive
+
+The server sends a WebSocket `ping` every **30 seconds**. The client must respond with `pong`. If the client does not respond, the connection will be closed.
+
+For manual connection checking, use the `ping` action:
+
+```json
+{
+  "action": "ping"
+}
+```
+
+---
+
+## Full Example
+
+```js
+const WebSocket = require('ws');
+
+const ws = new WebSocket('wss://api.erlcrussia.com/v2/gateway');
+
+ws.on('open', () => {
+  // 1. Authentication
+  ws.send(JSON.stringify({
+    action: 'auth',
+    token: 'your_ws_key_here'
+  }));
+});
+
+ws.on('message', (data) => {
+  const msg = JSON.parse(data.toString());
+
+  switch (msg.code) {
+    case 5127:
+      console.log('Connected, clientId:', msg.clientId);
+      break;
+
+    case 5128:
+      console.log('Authentication successful');
+      // 2. Subscribe to channels
+      ws.send(JSON.stringify({
+        action: 'subscribe',
+        channels: ['Server', 'Players', 'Queue', 'JoinLogs']
+      }));
+      break;
+
+    case 5131:
+      console.log('Subscriptions:', msg.channels);
+      break;
+
+    case 5130:
+      console.warn('Denied channel:', msg.channel);
+      break;
+
+    case 5133:
+      console.log('Cache empty');
+      break;
+
+    case 5129:
+      // pong
+      break;
+
+    default:
+      if (msg.code >= 5100) {
+        console.error('Error:', msg.code, msg.message);
+        break;
+      }
+      // Data update
+      if (msg.Name) console.log('Server:', msg.Name, 'Players:', msg.CurrentPlayers);
+      if (msg.Players) console.log('Players:', msg.Players.length);
+      if (msg.Queue) console.log('Queue:', msg.Queue.length);
+      if (msg.JoinLogs) console.log('Join log:', msg.JoinLogs);
+      break;
+  }
+});
+
+ws.on('close', () => {
+  console.log('Connection closed');
+});
+
+ws.on('error', (err) => {
+  console.error('Connection error:', err.message);
+});
+```

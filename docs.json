@@ -15,23 +15,22 @@
     "dark": "/favicon.png"
   },
   "navigation": {
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Наш Discord",
-          "href": "https://discord.gg/MoscowRus",
-          "icon": "discord"
-        }
-      ]
-    },
     "languages": [
       {
         "language": "ru",
+        "anchors": [
+          {
+            "anchor": "Наш Discord",
+            "href": "https://discord.gg/MoscowRus",
+            "icon": "discord"
+          }
+        ],
         "tabs": [
           {
             "tab": "Информация и Правила",
             "icon": "circle-info",
-            "groups": [
+            "pages": [
+              "ru/index",
               {
                 "group": "Начало",
                 "icon": "rocket",
@@ -179,6 +178,9 @@
             ]
           }
         ]
+      },
+      {
+        "$ref": "./en.json"
       }
     ]
   },
