@@ -296,15 +296,5 @@
   },
   "appearance": {
     "default": "system"
-  },
-  "interaction": {
-    "drilldown": true
-  },
-  "errors": {
-    "404": {
-      "redirect": true,
-      "title": "Страница Не Найдена",
-      "description": "Страница не найдена. Возможно, вы искали одну из этих страниц:"
-    }
   }
 }
