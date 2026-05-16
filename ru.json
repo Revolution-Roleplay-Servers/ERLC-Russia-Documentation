@@ -40,6 +40,7 @@
         {
           "version": "API V1",
           "pages": [
+            "ru/our-discord",
             {
               "group": "Документация API V1",
               "icon": "file-code",
@@ -79,6 +80,7 @@
           "version": "API V2",
           "default": true,
           "pages": [
+            "ru/our-discord",
             {
               "group": "Документация API V2",
               "icon": "file-code",
@@ -142,22 +144,43 @@
       "tab": "Другие Варианты Интеграции",
       "icon": "puzzle-piece",
       "pages": [
-        "ru/other/websocket-gateway",
-        "ru/other/event-webhook"
+        "ru/other/our-discord",
+        {
+          "group": "Интеграции",
+          "icon": "plug",
+          "pages": [
+            "ru/other/websocket-gateway",
+            "ru/other/event-webhook"
+          ]
+        }
       ]
     },
     {
       "tab": "Инструкции",
       "icon": "book-open",
       "pages": [
-        "ru/tutorials/how-to-get-api-key"
+        "ru/tutorials/our-discord",
+        {
+          "group": "Быстрый Старт",
+          "icon": "rocket",
+          "pages": [
+            "ru/tutorials/how-to-get-api-key"
+          ]
+        }
       ]
     },
     {
       "tab": "Возможности Документации",
       "icon": "clipboard-list",
       "pages": [
-        "ru/docs-features/mcp-server"
+        "ru/docs-features/our-discord",
+        {
+          "group": "Инструменты Разработчика",
+          "icon": "terminal",
+          "pages": [
+            "ru/docs-features/mcp-server"
+          ]
+        }
       ]
     }
   ],

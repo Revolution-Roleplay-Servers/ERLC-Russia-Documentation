@@ -58,6 +58,36 @@
       "source": "/ru/our-discord",
       "destination": "/ru",
       "permanent": false
+    },
+    {
+      "source": "/en/other/our-discord",
+      "destination": "/en",
+      "permanent": false
+    },
+    {
+      "source": "/ru/other/our-discord",
+      "destination": "/ru",
+      "permanent": false
+    },
+    {
+      "source": "/en/tutorials/our-discord",
+      "destination": "/en",
+      "permanent": false
+    },
+    {
+      "source": "/ru/tutorials/our-discord",
+      "destination": "/ru",
+      "permanent": false
+    },
+    {
+      "source": "/en/docs-features/our-discord",
+      "destination": "/en",
+      "permanent": false
+    },
+    {
+      "source": "/ru/docs-features/our-discord",
+      "destination": "/ru",
+      "permanent": false
     }
   ]
 }
